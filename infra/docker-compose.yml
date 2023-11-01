@@ -20,6 +20,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - static:/backend_static
+    depends_on:
+      - frontend
   frontend:
     build:
       context: ../frontend
