@@ -1,13 +1,11 @@
 from django.db import models
+from django.db.models import Q, F
 
 from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    """
-    Кастомизированная модель пользователя.
-    Регистрация с помощью email.
-    """
+    '''Кастомная модель пользователя. Регистрация по email.'''
     USER = 'user'
     ADMIN = 'admin'
     ROLE_USER = [
@@ -36,9 +34,31 @@ class User(AbstractUser):
         return self.username
 
 
-class Favorites(models.Model):
-    pass
+class Follow(models.Model):
+    """Подписки на авторов рецептов."""
+    user = models.ForeignKey(
+        User,
+        verbose_name='Пользователь',
+        related_name='follower',
+        on_delete=models.CASCADE,
+        help_text='Текущий пользователь')
+    author = models.ForeignKey(
+        User,
+        verbose_name='Подписка',
+        related_name='followed',
+        on_delete=models.CASCADE,
+        help_text='Подписаться на автора рецепта(ов)')
 
+    class Meta:
+        verbose_name = 'Мои подписки'
+        verbose_name_plural = 'Мои подписки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_following'),
+            models.CheckConstraint(
+                check=~Q(user=F('author')),
+                name='no_self_following')]
 
-class Follows(models.Model):
-    pass
+    def __str__(self):
+        return f'Пользователь {self.user} подписан на {self.author}'

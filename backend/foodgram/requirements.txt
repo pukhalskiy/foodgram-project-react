@@ -28,3 +28,6 @@ sqlparse==0.4.4
 typing_extensions==4.7.1
 tzdata==2023.3
 urllib3==2.0.6
+Pillow==10.1.0
+django-extra-fields==3.0.2
+django-filter==23.3

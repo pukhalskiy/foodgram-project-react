@@ -2,21 +2,14 @@ from django.db import models
 
 
 class Tags(models.Model):
-    RED = 'FF0000'
-    GREEN = '008000'
-    BLUE = '0000FF'
-    COLOR_TAG = [
-        (RED, 'Красный'),
-        (GREEN, 'Зелёный'),
-        (BLUE, 'Синий')
-    ]
+    '''Модель для тегов рецепта.'''
     name = models.CharField(verbose_name='Название тега', unique=True,
                             max_length=150, help_text='Введите название тега')
     color = models.CharField(verbose_name='HEX цвета', unique=True,
-                             default=GREEN, choices=COLOR_TAG,
-                             help_text='Выберите цвета')
+                             help_text='Выберите цвета', db_index=False)
     slug = models.SlugField(verbose_name='Слаг', max_length=150,
-                            unique=True, help_text='Укажите слаг')
+                            unique=True, help_text='Укажите слаг',
+                            db_index=False)
 
     class Meta:
         verbose_name = 'Тег'
