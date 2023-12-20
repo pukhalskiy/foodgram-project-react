@@ -16,6 +16,7 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
   backend:
+    image: perineum/foodgram_backend
     build:
       context: ../backend/foodgram/
       dockerfile: Dockerfile
@@ -25,6 +26,7 @@ services:
     depends_on:
       - frontend
   frontend:
+    image: perineum/foodgram_frontend
     build:
       context: ../frontend
       dockerfile: Dockerfile
