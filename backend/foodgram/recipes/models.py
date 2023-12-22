@@ -12,7 +12,7 @@ class Ingredients(models.Model):
                             db_index=True)
 
     measurement_unit = models.CharField(verbose_name='Единица измерения',
-                                        max_length=150, 
+                                        max_length=150,
                                         help_text='Укажите единицу измерения')
 
     class Meta:
@@ -48,7 +48,7 @@ class Recipes(models.Model):
                               upload_to='media/')
     pub_date = models.DateTimeField(verbose_name='Время публикации',
                                     auto_now_add=True)
-    
+
     class Meta:
         default_related_name = 'recipes'
 
@@ -103,4 +103,3 @@ class ShoppingCart(models.Model):
 
     def __str__(self):
         return f'{self.recipe}'
-    

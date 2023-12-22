@@ -71,7 +71,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         ShoppingCart.objects.get(recipe=recipe).delete()
         return Response('Рецепт удалён из списка покупок',
                         status=status.HTTP_204_NO_CONTENT)
-    
+
     @action(detail=True,
             methods=['POST', 'DELETE'],
             permission_classes=[IsAuthenticated])
@@ -97,7 +97,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         Favorites.objects.get(recipe=recipe).delete()
         return Response('Рецепт успешно удалён из избранного.',
                         status=status.HTTP_204_NO_CONTENT)
-    
+
     @action(detail=False,
             methods=['get'],
             permission_classes=[IsAuthenticated])
