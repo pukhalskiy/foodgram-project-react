@@ -1,18 +1,18 @@
-from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework.exceptions import ValidationError
+
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
 
-
-from tags.models import Tags
-from recipes.models import (Recipes, Favorites, ShoppingCart,
-                            IngredientsForRecipes, Ingredients)
-from users.models import User, Follow
+from recipes.models import (Favorites, Ingredients, IngredientsForRecipes,
+                            Recipes, ShoppingCart, Tags)
+from users.models import Follow, User
+from .constants import (MIN_AMOUNT_INREDIENTS, MIN_TIME_COOKING,
+                        MAX_TIME_COOKING)
 
 
 class UserSerializer(serializers.ModelSerializer):
-    '''Сериализатор модели User.'''
+    """Сериализатор модели User."""
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'password',
@@ -92,6 +92,14 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         fields = ('ingredients', 'tags', 'image',
                   'name', 'text', 'cooking_time', 'author')
 
+    def validate_cooking_time(self, value):
+        if MIN_TIME_COOKING < value > MAX_TIME_COOKING:
+            raise ValidationError(
+                {'cooking_time': 'Время приготовления должно быть не'
+                    ' больше 9999 минут или меньше 1 минуты.'}
+            )
+        return value
+
     def validate_ingredients(self, value):
         ingredients = value
         if not ingredients:
@@ -103,7 +111,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             if ingredient in ingredients_list:
                 raise ValidationError(
                     {'ingredients': 'Ингридиенты повторяются!'})
-            if int(item['amount']) <= 0:
+            if int(item['amount']) <= MIN_AMOUNT_INREDIENTS:
                 raise ValidationError(
                     {'amount': 'Количество должно быть больше 0!'})
             ingredients_list.append(ingredient)
@@ -200,6 +208,14 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         source='recipe',
         read_only=True)
 
+    def validate(self, data):
+        user = self.context['user']
+        recipe = self.context['recipe']
+        if ShoppingCart.objects.filter(author=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                {'errors': 'Рецепт уже добавлен в корзину'})
+        return data
+
     class Meta:
         model = ShoppingCart
         fields = ('id', 'name', 'image', 'coocking_time')
@@ -219,6 +235,14 @@ class FavoriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         source='recipes',
         read_only=True)
+
+    def validate(self, data):
+        user = self.context['user']
+        recipe = self.context['recipe']
+        if Favorites.objects.filter(author=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                {'errors': 'Рецепт уже добавлен!'})
+        return data
 
     class Meta:
         model = Favorites

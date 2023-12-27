@@ -1,5 +1,6 @@
-from django.db.models import Sum
 from datetime import date
+
+from django.db.models import Sum
 from django.http import HttpResponse
 
 from recipes.models import IngredientsForRecipes
@@ -12,7 +13,7 @@ def shopping_cart(self, request, author):
     ).values(
         'ingredient__name', 'ingredient__measurement_unit'
     ).annotate(
-        amounts=Sum('amount', distinct=True)).order_by('amounts')
+        amounts=Sum('amount', distinct=True)).order_by('ingredient__name')
     today = date.today().strftime("%d-%m-%Y")
     shopping_list = f'Список покупок на: {today}\n\n'
     for ingredient in sum_ingredients_in_recipes:

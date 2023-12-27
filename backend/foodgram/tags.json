@@ -1,6 +1,6 @@
 [
   {
-    "model": "tags.tags",
+    "model": "recipes.tags",
     "pk": 1,
     "fields":{
       "name": "завтрак",
@@ -9,7 +9,7 @@
     }
   },
   {
-    "model": "tags.tags",
+    "model": "recipes.tags",
     "pk": 2,
     "fields":{
       "name": "обед",
@@ -18,7 +18,7 @@
     }
   },
   {
-    "model": "tags.tags",
+    "model": "recipes.tags",
     "pk": 3,
     "fields":{
       "name": "ужин",
