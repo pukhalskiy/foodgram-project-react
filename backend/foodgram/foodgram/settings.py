@@ -13,7 +13,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = os.getenv('HOSTS', '').split(',')
+ALLOWED_HOSTS = os.getenv('HOSTS', '*').split(',')
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -64,7 +64,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-TESTING = False
+TESTING = os.getenv('TESTING') == 'True'
 
 if TESTING is True:
     DATABASES = {

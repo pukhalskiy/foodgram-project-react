@@ -59,25 +59,18 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, **kwargs):
         recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
         user = self.request.user
-        if request.method == 'POST':
-            serializer = ShoppingCartSerializer(data=request.data,
-                                                context={'user': user,
-                                                         'recipe': recipe})
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(author=user, recipe=recipe)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-        if not ShoppingCart.objects.filter(author=user,
-                                           recipe=recipe).exists():
-            return Response({'errors': 'Объект не найден'},
-                            status=status.HTTP_404_NOT_FOUND)
+        serializer = ShoppingCartSerializer(data=request.data,
+                                            context={'user': user,
+                                                     'recipe': recipe})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(author=user, recipe=recipe)
+        return Response(serializer.data,  status=status.HTTP_201_CREATED)
 
     @shopping_cart.mapping.delete
     def shopping_cart_delete(self, request, **kwargs):
-        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        ShoppingCart.objects.get(recipe=recipe).delete()
+        get_object_or_404(ShoppingCart, author=request.user,
+                          recipe=get_object_or_404(
+                              Recipes, id=self.kwargs.get('pk'))).delete()
         return Response('Рецепт удалён из списка покупок',
                         status=status.HTTP_204_NO_CONTENT)
 
@@ -87,25 +80,18 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def favorite(self, request, *args, **kwargs):
         recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
         user = self.request.user
-        if request.method == 'POST':
-            serializer = FavoriteSerializer(data=request.data,
-                                            context={'user': user,
-                                                     'recipe': recipe})
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(author=user, recipe=recipe)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-        if not Favorites.objects.filter(author=user,
-                                        recipe=recipe).exists():
-            return Response({'errors': 'Объект не найден'},
-                            status=status.HTTP_404_NOT_FOUND)
+        serializer = FavoriteSerializer(data=request.data,
+                                        context={'user': user,
+                                                 'recipe': recipe})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(author=user, recipe=recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @favorite.mapping.delete
     def favorite_delete(self, request, *args, **kwargs):
-        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        Favorites.objects.get(recipe=recipe).delete()
+        get_object_or_404(Favorites, author=request.user,
+                          recipe=get_object_or_404(
+                              Recipes, id=self.kwargs.get('pk'))).delete()
         return Response('Рецепт успешно удалён из избранного.',
                         status=status.HTTP_204_NO_CONTENT)
 
@@ -163,25 +149,19 @@ class UserViewSet(viewsets.ModelViewSet):
     def subscribe(self, request, *args, **kwargs):
         author = get_object_or_404(User, id=self.kwargs.get('pk'))
         user = self.request.user
-        if request.method == 'POST':
-            serializer = FollowSerializer(
-                data=request.data,
-                context={'request': request, 'author': author})
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(author=author, user=user)
-                return Response({'Подписка успешно создана': serializer.data},
-                                status=status.HTTP_201_CREATED)
-        if not Follow.objects.filter(author=author, user=user).exists():
-            return Response({'errors': 'Объект не найден'},
-                            status=status.HTTP_404_NOT_FOUND)
-        Follow.objects.get(author=author).delete()
-        return Response('Успешная отписка',
-                        status=status.HTTP_204_NO_CONTENT)
+        serializer = FollowSerializer(data=request.data,
+                                      context={'request': request,
+                                               'author': author})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(author=author, user=user)
+        return Response({'Подписка успешно создана': serializer.data},
+                        status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
     def subscribe_delete(self, request, *args, **kwargs):
-        author = get_object_or_404(User, id=self.kwargs.get('pk'))
-        Follow.objects.get(author=author).delete()
+        get_object_or_404(Follow, user=request.user,
+                          author=get_object_or_404(
+                              User, id=self.kwargs.get('pk'))).delete()
         return Response('Успешная отписка',
                         status=status.HTTP_204_NO_CONTENT)
 

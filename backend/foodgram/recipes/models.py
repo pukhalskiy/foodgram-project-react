@@ -1,20 +1,23 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from colorfield.fields import ColorField
-from api.constants import MIN_AMOUNT_INREDIENTS, CHAR_FIELD_MAX_LENGTH
+
+from core.constants import (MIN_AMOUNT_INREDIENTS, NAME_MAX_LENGTH,
+                            COLOR_MAX_LENGHT, SLUG_MAX_LENGHT,
+                            CHAR_FIELD_MAX_LENGTH)
 from users.models import User
 
 
 class Tags(models.Model):
     """Модель для тегов рецепта."""
     name = models.CharField(verbose_name='Название тега', unique=True,
-                            max_length=CHAR_FIELD_MAX_LENGTH,
+                            max_length=NAME_MAX_LENGTH,
                             help_text='Введите название тега')
     color = ColorField(verbose_name='HEX цвета', unique=True,
                        help_text='Выберите цвета', db_index=False,
-                       max_length=CHAR_FIELD_MAX_LENGTH, default='#FF0000')
+                       max_length=COLOR_MAX_LENGHT, default='#FF0000')
     slug = models.SlugField(verbose_name='Слаг',
-                            max_length=CHAR_FIELD_MAX_LENGTH,
+                            max_length=SLUG_MAX_LENGHT,
                             unique=True, help_text='Укажите слаг',
                             db_index=False)
 
@@ -29,7 +32,7 @@ class Tags(models.Model):
 class Ingredients(models.Model):
     """Ингридиенты для рецептов."""
     name = models.CharField(verbose_name='Ингридиент',
-                            max_length=CHAR_FIELD_MAX_LENGTH,
+                            max_length=NAME_MAX_LENGTH,
                             help_text='Введите название ингридиента',
                             db_index=True)
 
@@ -64,7 +67,7 @@ class Recipes(models.Model):
                             help_text='Опишите инструкцию по приготовлению')
     name = models.CharField(verbose_name='Название рецепта',
                             help_text='Введите название рецета',
-                            max_length=CHAR_FIELD_MAX_LENGTH,
+                            max_length=NAME_MAX_LENGTH,
                             db_index=True)
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',
@@ -76,6 +79,7 @@ class Recipes(models.Model):
                                     auto_now_add=True)
 
     class Meta:
+        ordering = ('-pub_date',)
         default_related_name = 'recipes'
 
 
@@ -91,8 +95,9 @@ class IngredientsForRecipes(models.Model):
                                    on_delete=models.CASCADE,
                                    help_text='Выберите Ингридиет')
     amount = models.PositiveSmallIntegerField(validators=[
-        MinValueValidator(MIN_AMOUNT_INREDIENTS,
-                          'Минимальное количество ингридиента 1')],
+        MinValueValidator(
+            MIN_AMOUNT_INREDIENTS,
+            f'Минимальное количество ингридиентов {MIN_AMOUNT_INREDIENTS}')],
         verbose_name='Количество ингридиента',
         help_text='Укажите количество ингридиента')
 

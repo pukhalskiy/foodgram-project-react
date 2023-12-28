@@ -4,11 +4,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 
+from core.constants import (MIN_AMOUNT_INREDIENTS, MIN_TIME_COOKING,
+                            MAX_TIME_COOKING)
 from recipes.models import (Favorites, Ingredients, IngredientsForRecipes,
                             Recipes, ShoppingCart, Tags)
 from users.models import Follow, User
-from .constants import (MIN_AMOUNT_INREDIENTS, MIN_TIME_COOKING,
-                        MAX_TIME_COOKING)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -96,7 +96,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         if MIN_TIME_COOKING < value > MAX_TIME_COOKING:
             raise ValidationError(
                 {'cooking_time': 'Время приготовления должно быть не'
-                    ' больше 9999 минут или меньше 1 минуты.'}
+                    f' больше {MAX_TIME_COOKING} минут или меньше'
+                    f' {MIN_TIME_COOKING} минуты.'}
             )
         return value
 
@@ -113,7 +114,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                     {'ingredients': 'Ингридиенты повторяются!'})
             if int(item['amount']) <= MIN_AMOUNT_INREDIENTS:
                 raise ValidationError(
-                    {'amount': 'Количество должно быть больше 0!'})
+                    {'amount': 'Количество должно быть от'
+                     f' {MIN_AMOUNT_INREDIENTS} или больше.'})
             ingredients_list.append(ingredient)
         return value
 

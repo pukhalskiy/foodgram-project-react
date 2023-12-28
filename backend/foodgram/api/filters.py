@@ -10,7 +10,7 @@ class IngredientFilter(SearchFilter):
 
 
 class RecipeFilter(FilterSet):
-    '''Набор фильтров для модели Recipes.'''
+    """Набор фильтров для модели Recipes."""
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',

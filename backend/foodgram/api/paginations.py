@@ -1,6 +1,6 @@
 from rest_framework.pagination import PageNumberPagination
 
-from .constants import POSTS_ON_PAGE
+from core.constants import POSTS_ON_PAGE
 
 
 class ApiPagination(PageNumberPagination):

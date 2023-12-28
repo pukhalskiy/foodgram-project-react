@@ -2,7 +2,8 @@ from django.db import models
 from django.db.models import Q, F
 from django.contrib.auth.models import AbstractUser
 
-from api.constants import CHAR_FIELD_MAX_LENGTH
+from core.constants import (NAME_MAX_LENGTH, ROLE_MAX_LENGHT,
+                            PASSWORD_MAX_LENGHT)
 
 
 class User(AbstractUser):
@@ -13,14 +14,14 @@ class User(AbstractUser):
         (USER, 'Пользователь'),
         (ADMIN, 'Администратор')
     ]
-    username = models.CharField('Логин', max_length=CHAR_FIELD_MAX_LENGTH,
+    username = models.CharField('Логин', max_length=NAME_MAX_LENGTH,
                                 unique=True)
-    first_name = models.CharField('Имя', max_length=CHAR_FIELD_MAX_LENGTH)
-    last_name = models.CharField('Фамилия', max_length=CHAR_FIELD_MAX_LENGTH)
+    first_name = models.CharField('Имя', max_length=NAME_MAX_LENGTH)
+    last_name = models.CharField('Фамилия', max_length=NAME_MAX_LENGTH)
     email = models.EmailField('email-адрес', unique=True)
-    role = models.CharField(max_length=15, choices=ROLE_USER,
+    role = models.CharField(max_length=ROLE_MAX_LENGHT, choices=ROLE_USER,
                             default=USER, verbose_name='Пользовательская роль')
-    password = models.CharField(max_length=CHAR_FIELD_MAX_LENGTH,
+    password = models.CharField(max_length=PASSWORD_MAX_LENGHT,
                                 verbose_name='Пароль')
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'password', 'first_name', 'last_name']
