@@ -64,7 +64,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
                                                      'recipe': recipe})
         serializer.is_valid(raise_exception=True)
         serializer.save(author=user, recipe=recipe)
-        return Response(serializer.data,  status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @shopping_cart.mapping.delete
     def shopping_cart_delete(self, request, **kwargs):
