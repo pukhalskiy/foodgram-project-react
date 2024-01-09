@@ -66,7 +66,7 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 TESTING = os.getenv('TESTING') == 'True'
 
-if TESTING is True:
+if TESTING:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

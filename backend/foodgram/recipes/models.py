@@ -1,6 +1,6 @@
+from colorfield.fields import ColorField
 from django.db import models
 from django.core.validators import MinValueValidator
-from colorfield.fields import ColorField
 
 from core.constants import (MIN_AMOUNT_INREDIENTS, NAME_MAX_LENGTH,
                             COLOR_MAX_LENGHT, SLUG_MAX_LENGHT,
