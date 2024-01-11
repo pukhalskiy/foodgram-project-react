@@ -41,9 +41,9 @@ jobs:
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          context: backend
+          context: ./backend/foodgram
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
 
   deploy:
       runs-on: ubuntu-latest
@@ -60,15 +60,5 @@ jobs:
               script: |
                   sudo docker stop
                   sudo docker rm backend
-                  sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend/foodgram
-                  touch .env
-                  echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
-                  echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-                  echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-                  echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-                  echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-                  echo DEBUG=${{ secrets.DEBUG }} >> .env
-                  echo HOSTS=${{ secrets.HOSTS }} >> .env
-                  echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-                  echo TESTING=${{ secrets.TESTING }} >> .env
+                  sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
                   sudo docker compose up -d
